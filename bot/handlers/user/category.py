@@ -129,20 +129,21 @@ async def show_products(call: CallbackQuery, callback_data: ProductCallback):
 @category_router.callback_query(BuyCallback.filter(F.action == "buy"))
 async def buy_product_handler(call: CallbackQuery, callback_data: BuyCallback):
     product = api_response.get_product(callback_data.product_id)
-
+    omborda = product['stock'] - callback_data.quantity
     text = (
         f"🛍 Mahsulot: {product['name']}\n"
         f"💰 Narxi: {float(product['price']):,.0f} so'm\n"
+        f"🏪 Omborda: {f'{omborda} ta qoldi' if omborda else 'Qolmadi'}\n"
         f"📦 Miqdori: {callback_data.quantity} ta\n"
         f"💳 Jami: {float(product['price']) * callback_data.quantity:,.0f} so'm\n\n"
         f"Miqdorni tanlang:"
     )
     if product['stock'] < callback_data.quantity:
-        return await call.answer('Mahsulot soni cheklangan!', show_alert=True)
+        return await call.answer('⚠️ Mahsulot soni cheklangan!', show_alert=True)
 
     await call.message.edit_text(
         text=text,
-        reply_markup=quantity_selector_builder(callback_data.product_id, callback_data.quantity)
+        reply_markup=quantity_selector_builder(callback_data.product_id, callback_data.quantity, callback_data.page)
     )
 
     await call.answer()
@@ -180,7 +181,8 @@ async def cancel_purchase_handler(call: CallbackQuery, callback_data: BuyCallbac
         text=f"Sotib olish bekor qilindi: {product['name']}",
         reply_markup=product_detail_builder(
             sub_id=product['subcategory'],
-            product_id=callback_data.product_id
+            product_id=callback_data.product_id,
+            page=callback_data.page
         )
     )
     await call.answer()

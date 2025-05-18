@@ -69,7 +69,7 @@ def products_builder(datas, cols, cat_id, page: int = 0):
 
 def product_detail_builder(sub_id, product_id, page: int = 0):
     builder = InlineKeyboardBuilder()
-    builder.button(text='🛒 Sotib olish', callback_data=BuyCallback(action="buy", product_id=product_id))
+    builder.button(text='🛒 Sotib olish', callback_data=BuyCallback(action="buy", product_id=product_id, page=page))
     builder.button(
         text="↩️ Ortga",
         callback_data=ProductCallback(action='back', subcategory_id=sub_id)
@@ -83,50 +83,50 @@ def product_detail_builder(sub_id, product_id, page: int = 0):
     return builder.as_markup()
 
 
-def buy_product_builder(product_id, quantity=1):
+def buy_product_builder(product_id, quantity=1, page: int = 0):
     builder = InlineKeyboardBuilder()
     builder.button(
         text="✅ Tasdiqlash",
-        callback_data=BuyCallback(action="confirm", product_id=product_id, quantity=quantity)
+        callback_data=BuyCallback(action="confirm", product_id=product_id, quantity=quantity, page=page)
     )
     builder.button(
         text="❌ Bekor qilish",
-        callback_data=BuyCallback(action="cancel", product_id=product_id)
+        callback_data=BuyCallback(action="cancel", product_id=product_id, page=page)
     )
     builder.adjust(2)
     return builder.as_markup()
 
 
-def quantity_selector_builder(product_id, current_quantity):
+def quantity_selector_builder(product_id, current_quantity, page=0):
     builder = InlineKeyboardBuilder()
 
     # Kamaytirish tugmasi
     if current_quantity > 1:
         builder.button(
             text="➖",
-            callback_data=BuyCallback(action="buy", product_id=product_id, quantity=current_quantity - 1)
+            callback_data=BuyCallback(action="buy", product_id=product_id, quantity=current_quantity - 1, page=page)
         )
 
     # Miqdor ko'rsatkichi
     builder.button(
         text=f"{current_quantity}",
-        callback_data=BuyCallback(action="buy", product_id=product_id, quantity=current_quantity)
+        callback_data=BuyCallback(action="buy", product_id=product_id, quantity=current_quantity, page=page)
     )
 
     # Oshirish tugmasi
     builder.button(
         text="➕",
-        callback_data=BuyCallback(action="buy", product_id=product_id, quantity=current_quantity + 1)
+        callback_data=BuyCallback(action="buy", product_id=product_id, quantity=current_quantity + 1, page=page)
     )
 
     # Tasdiqlash va bekor qilish
     builder.button(
         text="✅ Tasdiqlash",
-        callback_data=BuyCallback(action="confirm", product_id=product_id, quantity=current_quantity)
+        callback_data=BuyCallback(action="confirm", product_id=product_id, quantity=current_quantity, page=page)
     )
     builder.button(
         text="❌ Bekor qilish",
-        callback_data=BuyCallback(action="cancel", product_id=product_id)
+        callback_data=BuyCallback(action="cancel", product_id=product_id, page=page)
     )
 
     builder.adjust(3, 2)

@@ -34,3 +34,4 @@ class BuyCallback(CallbackData, prefix="buy"):
     action: BuyAction
     product_id: Optional[int] = None
     quantity: Optional[int] = 1
+    page: Optional[int] = None
