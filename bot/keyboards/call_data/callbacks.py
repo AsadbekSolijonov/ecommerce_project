@@ -1,5 +1,8 @@
 from typing import Optional
 
+from enum import StrEnum
+from typing import Optional
+from pydantic import Field
 from aiogram.filters.callback_data import CallbackData
 
 
@@ -19,3 +22,15 @@ class ProductCallback(CallbackData, prefix='prod'):
     subcategory_id: int
     product_id: Optional[int] = None
     page: Optional[int] = None
+
+
+class BuyAction(StrEnum):
+    BUY = "buy"
+    CONFIRM = "confirm"
+    CANCEL = "cancel"
+
+
+class BuyCallback(CallbackData, prefix="buy"):
+    action: BuyAction
+    product_id: Optional[int] = None
+    quantity: Optional[int] = 1

@@ -29,6 +29,16 @@ class BotAPI:
             url = f"{self.products}{prod_id}"
             return self.json_loads(url)
 
+    def create_order(product_id, quantity, user_id):
+        # Bu yerda APIga so'rov yuborish logikasi
+        # Misol uchun:
+        # response = requests.post(
+        #     f"{BASE_URL}/orders/",
+        #     json={"product": product_id, "quantity": quantity, "user": user_id}
+        # )
+        # return response.json()
+        pass
+
 
 api_response = BotAPI()
 

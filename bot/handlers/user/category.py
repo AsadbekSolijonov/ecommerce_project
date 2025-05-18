@@ -1,12 +1,15 @@
 from aiogram import Router, F, html
 from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+
 from bot.handlers.api.response import api_response
 from bot.keyboards.call_data.callbacks import (CategoryCallback,
                                                SubcategoryCallback, ProductCallback)
 from bot.keyboards.inline.button import (cateogry_builder, subcategories_builder,
-                                         products_builder, product_detail_builder)
+                                         products_builder, product_detail_builder, quantity_selector_builder)
 from bot.utils.helper.help_time import time_formatter
+from bot.keyboards.call_data.callbacks import BuyCallback
 
 category_router = Router()
 
@@ -93,9 +96,9 @@ async def show_products(call: CallbackQuery, callback_data: ProductCallback):
 
     if callback_data.action == 'view':
         product = api_response.get_product(product_id)
-        product_name = f"📦 Mahsulot: {product['name']}"
+        product_name = f"🛍 Mahsulot: {product['name']}"
         product_desc = f"📝 Batavsil: {product['description'][:300]}..."
-        product_price = f"💰 Narxi: {float(product['price']):,.0f} so'm"
+        product_price = f"💳 Narxi: {float(product['price']):,.0f} so'm"
         product_stock = product['stock']
         product_stock = f"📦 {product_stock} ta {product['name']} bor." if product_stock else '❌ Hozircha mavjud emas!'
         mark = '💾' if time_formatter(product['created_at']) == time_formatter(product['updated_at']) else '🔄'
@@ -109,7 +112,7 @@ async def show_products(call: CallbackQuery, callback_data: ProductCallback):
                           f"{html.bold(product_time)}")
         await call.message.edit_text(
             text=product_detail,
-            reply_markup=product_detail_builder(subcategory_id, page=callback_data.page))
+            reply_markup=product_detail_builder(subcategory_id, product_id, page=callback_data.page))
 
     elif callback_data.action == 'back':
         subcategory = api_response.get_subcateogries(subcategory_id)
@@ -120,6 +123,66 @@ async def show_products(call: CallbackQuery, callback_data: ProductCallback):
             text=f"{html.bold(subcategory['name'])} ketegoriyasi:",
             reply_markup=products_builder(products, 2, cat_id=category_id))
 
+    await call.answer()
+
+
+@category_router.callback_query(BuyCallback.filter(F.action == "buy"))
+async def buy_product_handler(call: CallbackQuery, callback_data: BuyCallback):
+    product = api_response.get_product(callback_data.product_id)
+
+    text = (
+        f"🛍 Mahsulot: {product['name']}\n"
+        f"💰 Narxi: {float(product['price']):,.0f} so'm\n"
+        f"📦 Miqdori: {callback_data.quantity} ta\n"
+        f"💳 Jami: {float(product['price']) * callback_data.quantity:,.0f} so'm\n\n"
+        f"Miqdorni tanlang:"
+    )
+    if product['stock'] < callback_data.quantity:
+        return await call.answer('Mahsulot soni cheklangan!', show_alert=True)
+
+    await call.message.edit_text(
+        text=text,
+        reply_markup=quantity_selector_builder(callback_data.product_id, callback_data.quantity)
+    )
+
+    await call.answer()
+
+
+@category_router.callback_query(BuyCallback.filter(F.action == "confirm"))
+async def confirm_purchase_handler(call: CallbackQuery, callback_data: BuyCallback):
+    product = api_response.get_product(callback_data.product_id)
+    total_price = float(product['price']) * callback_data.quantity
+
+    # Bu yerda haqiqiy sotib olish logikasi bo'lishi kerak
+    # Misol uchun, APIga so'rov yuborish yoki ma'lumotlar bazasiga yozish
+
+    await call.message.edit_text(
+        text=(
+            f"✅ Sotib olish muvaffaqiyatli yakunlandi!\n\n"
+            f"🛍 Mahsulot: {product['name']}\n"
+            f"📦 Miqdori: {callback_data.quantity} ta\n"
+            f"💳 Jami: {total_price:,.0f} so'm\n\n"
+            f"Tez orada operatorlarimiz siz bilan bog'lanishadi."
+        ),
+        reply_markup=InlineKeyboardBuilder().button(
+            text="🏠 Bosh menyu",
+            callback_data=CategoryCallback(action="back")
+        ).as_markup()
+    )
+    await call.answer()
+
+
+@category_router.callback_query(BuyCallback.filter(F.action == "cancel"))
+async def cancel_purchase_handler(call: CallbackQuery, callback_data: BuyCallback):
+    product = api_response.get_product(callback_data.product_id)
+
+    await call.message.edit_text(
+        text=f"Sotib olish bekor qilindi: {product['name']}",
+        reply_markup=product_detail_builder(
+            sub_id=product['subcategory'],
+            product_id=callback_data.product_id
+        )
+    )
     await call.answer()
 
 
