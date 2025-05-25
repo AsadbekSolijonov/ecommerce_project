@@ -1,1 +1,1 @@
-from .add_commands import set_bot_commands
+from .add_commands import add_bot_commands

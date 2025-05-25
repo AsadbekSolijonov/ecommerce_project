@@ -1,4 +1,5 @@
 import json
+import logging
 
 import requests
 
@@ -39,10 +40,18 @@ class BotAPI:
         # return response.json()
         pass
 
+    def search_products(self, find):
+
+        if find:
+            url = f'{self.products}?name={find}'
+            return self.json_loads(url)
+        return []
+
 
 api_response = BotAPI()
 
 if __name__ == '__main__':
     api_response = BotAPI()
-    print(api_response.get_categories(1))
+    print(api_response.search_products(find='dvo'))
+
 #
