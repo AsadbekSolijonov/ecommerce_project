@@ -1,6 +1,8 @@
 from django.shortcuts import render
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
 
+from backend.apps.products.filters import ProductFilterSet
 from backend.apps.products.models import (Category,
                                           SubCategory,
                                           Product)
@@ -24,3 +26,5 @@ class SubCategoryViewSet(ModelViewSet):
 class ProductViewSet(ModelViewSet):
     serializer_class = ProductSerializer
     queryset = Product.objects.all()
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = ProductFilterSet
