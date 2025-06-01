@@ -197,9 +197,9 @@ async def confirm_purchase_handler(call: CallbackQuery, callback_data: BuyCallba
                 amount=total_price
             )
         ],
-        # photo_url=product['image'],  # https://images.uzum.uz/crskc8ji153t30undvm0/original.jpg',  # Agar rasm bo'lsa
-        # photo_width=512,
-        # photo_height=512,
+        photo_url=product['image'],  # 'https://images.uzum.uz/crskc8ji153t30undvm0/original.jpg',  # Agar rasm bo'lsa
+        photo_width=512,
+        photo_height=512,
         need_name=True,
         need_phone_number=True,
         need_email=True,
@@ -335,7 +335,7 @@ async def inline_query_handler(inline: InlineQuery):
                 id=str(uuid.uuid4()),
                 title=f"{name}",
                 description=f"{formatted_price} so'm\n{description}",
-                thumbnail_url=f'https://storage.kun.uz/source/10/z8qGXj646Qve_FIaYGQPpAVPTj9Pg5Dl.jpg',
+                thumbnail_url=product_image,
                 input_message_content=InputTextMessageContent(
                     message_text=product_detail
                 ),

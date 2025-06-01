@@ -6,9 +6,9 @@ import requests
 
 class BotAPI:
     def __init__(self):
-        self.categories = 'http://localhost:8000/api/v1/category/'
-        self.subcategory = 'http://localhost:8000/api/v1/subcategory/'
-        self.products = 'http://localhost:8000/api/v1/products/'
+        self.categories = 'https://abek.pythonanywhere.com/api/v1/category/'
+        self.subcategory = 'https://abek.pythonanywhere.com/api/v1/subcategory/'
+        self.products = 'https://abek.pythonanywhere.com/api/v1/products/'
 
     def json_loads(self, url):
         return json.loads(requests.get(url).text)
@@ -30,7 +30,7 @@ class BotAPI:
             url = f"{self.products}{prod_id}"
             return self.json_loads(url)
 
-    def create_order(product_id, quantity, user_id):
+    def create_order(self, order_data):
         # Bu yerda APIga so'rov yuborish logikasi
         # Misol uchun:
         # response = requests.post(
