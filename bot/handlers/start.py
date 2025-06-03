@@ -27,3 +27,8 @@ async def command_start_handler(message: Message) -> None:
     )
     await message.answer(f"Inline Modda qidirish funksiyasini ishlatish uchun tugmani bosing.",
                          reply_markup=builder.as_markup())
+
+
+@start_router.message(Command('men_uchaman'))
+async def can_fly(message: Message):
+    await message.answer('Men ham uchaman Abdullajon!')
