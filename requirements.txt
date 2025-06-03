@@ -26,6 +26,7 @@ idna==3.10
 kombu==5.5.3
 magic-filter==1.0.12
 multidict==6.4.3
+mysqlclient==2.2.7
 pillow==11.2.1
 prompt_toolkit==3.0.51
 propcache==0.3.1

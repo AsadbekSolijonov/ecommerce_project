@@ -3,12 +3,14 @@ import logging
 
 import requests
 
+from bot.app import WEB_URL
+
 
 class BotAPI:
     def __init__(self):
-        self.categories = 'https://abek.pythonanywhere.com/api/v1/category/'
-        self.subcategory = 'https://abek.pythonanywhere.com/api/v1/subcategory/'
-        self.products = 'https://abek.pythonanywhere.com/api/v1/products/'
+        self.categories = f'{WEB_URL}/api/v1/category/'
+        self.subcategory = f'{WEB_URL}/api/v1/subcategory/'
+        self.products = f'{WEB_URL}/api/v1/products/'
 
     def json_loads(self, url):
         return json.loads(requests.get(url).text)
