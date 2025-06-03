@@ -358,6 +358,11 @@ async def inline_query_handler(inline: InlineQuery):
     await inline.answer(results=results, cache_time=1)
 
 
+@category_router.message(Command('men_uchaman'))
+async def can_fly(message: Message):
+    await message.answer('Men ham uchaman Abdullajon!')
+
+
 @category_router.message()
 async def clear_manual_message(message: Message):
     logging.info(message.model_json_schema())
